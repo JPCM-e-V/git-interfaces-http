@@ -5,31 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"unicode"
+
+	gitutils "github.com/JPCM-e-V/git-interfaces-http/git-interfaces-go-utils"
 )
-
-func PktLine(s string) string {
-	len_s := len(s)
-
-	if len_s > 65516 {
-		return PktLine("ERR To long response.")
-	}
-
-	for i := 0; i < len_s; i++ {
-		if s[i] > unicode.MaxASCII {
-			return PktLine("ERR Non ASCII character found.")
-		}
-	}
-	length := len_s + 5
-	return fmt.Sprintf("%04x%s\n", length, s)
-}
-
-func WriteGitProtocol(w http.ResponseWriter, lines []string) {
-	for _, line := range lines {
-		fmt.Fprint(w, PktLine(line))
-	}
-	fmt.Fprint(w, "0000")
-}
 
 func PrintRequest(r *http.Request) {
 	fmt.Printf("%s %s %s", r.Method, r.URL, r.Proto)
@@ -45,7 +23,7 @@ func GitUploadPackInfo(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s", bytearr)
 	PrintRequest(r)
 	// WriteGitProtocol(w, []string{"# service=git-upload-pack"})
-	WriteGitProtocol(w, []string{"version 2", "ls-refs"})
+	gitutils.WriteGitProtocol(w, []string{"version 2", "ls-refs"})
 }
 
 func GitUploadPack(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +46,7 @@ func (g *GitHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(404)
-	fmt.Fprint(w, PktLine("ERR Not Found"))
+	fmt.Fprint(w, gitutils.PktLine("ERR Not Found"))
 }
 
 func main() {

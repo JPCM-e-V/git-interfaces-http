@@ -1,0 +1,3 @@
+[submodule "git-interfaces-go-utils"]
+	path = git-interfaces-go-utils
+	url = https://github.com/JPCM-e-V/git-interfaces-go-utils.git
