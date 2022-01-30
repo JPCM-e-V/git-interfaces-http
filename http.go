@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -19,11 +18,8 @@ func PrintRequest(r *http.Request) {
 
 func GitUploadPackInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-git-upload-pack-advertisement")
-	bytearr, _ := ioutil.ReadAll(r.Body)
-	fmt.Printf("%s", bytearr)
-	PrintRequest(r)
 	// WriteGitProtocol(w, []string{"# service=git-upload-pack"})
-	gitutils.WriteGitProtocol(w, []string{"version 2", "ls-refs"})
+	gitutils.WriteGitProtocol(w, map[string]string{"version 2": "", "ls-refs": ""})
 }
 
 func GitUploadPack(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +32,7 @@ type GitHandler struct {
 }
 
 func (g *GitHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	PrintRequest(r)
 	if r.Method == "GET" && r.URL.Path == "/info/refs" {
 		if r.URL.Query().Get("service") == "git-upload-pack" {
 			g.gitUploadPackInfoHandler.ServeHTTP(w, r)
@@ -46,7 +43,7 @@ func (g *GitHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(404)
-	fmt.Fprint(w, gitutils.PktLine("ERR Not Found"))
+	fmt.Fprint(w, gitutils.PktLine("ERR Not Found", ""))
 }
 
 func main() {
