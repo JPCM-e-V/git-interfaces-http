@@ -19,7 +19,7 @@ func PrintRequest(r *http.Request) {
 func GitUploadPackInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-git-upload-pack-advertisement")
 	// WriteGitProtocol(w, []string{"# service=git-upload-pack"})
-	gitutils.WriteGitProtocol(w, map[string]string{"version 2": "", "ls-refs": ""})
+	gitutils.WriteGitProtocol(w, []string{"version 2", "ls-refs"})
 }
 
 func GitUploadPack(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func (g *GitHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(404)
-	fmt.Fprint(w, gitutils.PktLine("ERR Not Found", ""))
+	fmt.Fprint(w, gitutils.PktLine("ERR Not Found"))
 }
 
 func main() {
