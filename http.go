@@ -23,7 +23,20 @@ func GitUploadPackInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func GitUploadPack(w http.ResponseWriter, r *http.Request) {
-
+	lines, err := gitutils.ReadGitProtocol(r.Body)
+	if err == nil {
+		var command string
+		for _, line := range lines {
+			if len(line) > 9 && line[:9] == "pcommand=" {
+				command = line[9:]
+			}
+		}
+		if command == "ls-refs" {
+			gitutils.WriteGitProtocol(w, []string{"8ed3ded8cb3ecff8345165ad40dbd36f421bfb2a HEAD"})
+		}
+	} else {
+		fmt.Fprint(w, gitutils.PktLine(err.Error()))
+	}
 }
 
 type GitHandler struct {
