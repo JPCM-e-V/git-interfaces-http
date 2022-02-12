@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	gitutils "github.com/JPCM-e-V/git-interfaces-http/git-interfaces-go-utils"
+	gitutils "github.com/JPCM-e-V/git-interfaces-go-utils"
 )
 
 func PrintRequest(r *http.Request) {
@@ -19,7 +19,7 @@ func PrintRequest(r *http.Request) {
 func GitUploadPackInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-git-upload-pack-advertisement")
 	// WriteGitProtocol(w, []string{"# service=git-upload-pack"})
-	gitutils.WriteGitProtocol(w, []string{"version 2", "ls-refs"})
+	gitutils.WriteGitProtocol(w, []string{"version 2", "ls-refs", "fetch"})
 }
 
 func GitUploadPack(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +33,8 @@ func GitUploadPack(w http.ResponseWriter, r *http.Request) {
 		}
 		if command == "ls-refs" {
 			gitutils.WriteGitProtocol(w, []string{"8ed3ded8cb3ecff8345165ad40dbd36f421bfb2a HEAD"})
+		} else if command == "fetch" {
+			fmt.Println(lines)
 		}
 	} else {
 		fmt.Fprint(w, gitutils.PktLine(err.Error()))
