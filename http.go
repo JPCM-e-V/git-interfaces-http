@@ -6,7 +6,10 @@ import (
 	"net/http"
 
 	gitutils "github.com/JPCM-e-V/git-interfaces-go-utils"
+	redisrepo "github.com/JPCM-e-V/git-interfaces-redis-repo"
 )
+
+const reponame string = "test"
 
 func PrintRequest(r *http.Request) {
 	fmt.Printf("%s %s %s", r.Method, r.URL, r.Proto)
@@ -32,7 +35,13 @@ func GitUploadPack(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if command == "ls-refs" {
-			gitutils.WriteGitProtocol(w, []string{"8ed3ded8cb3ecff8345165ad40dbd36f421bfb2a HEAD"})
+			// gitutils.WriteGitProtocol(w, []string{"8ed3ded8cb3ecff8345165ad40dbd36f421bfb2a HEAD"})
+			if refs, error := redisrepo.LsRefs(reponame); error == nil {
+				gitutils.WriteGitProtocol(w, refs)
+			} else {
+				w.WriteHeader(500)
+				fmt.Fprint(w, gitutils.PktLine("ERR InternalServerError: "+error.Error()))
+			}
 		} else if command == "fetch" {
 			fmt.Println(lines)
 		}
