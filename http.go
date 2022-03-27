@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	gitutils "github.com/JPCM-e-V/git-interfaces-go-utils"
-	redisrepo "github.com/JPCM-e-V/git-interfaces-redis-repo"
+	redisrepo "github.com/JPCM-e-V/git-interfaces-http/redisrepo"
 )
 
 const reponame string = "test"
@@ -36,17 +36,19 @@ func GitUploadPack(w http.ResponseWriter, r *http.Request) {
 		}
 		if command == "ls-refs" {
 			// gitutils.WriteGitProtocol(w, []string{"8ed3ded8cb3ecff8345165ad40dbd36f421bfb2a HEAD"})
-			if refs, error := redisrepo.LsRefs(reponame); error == nil {
+			if refs, err := redisrepo.LsRefs(reponame); err == nil {
 				gitutils.WriteGitProtocol(w, refs)
 			} else {
 				w.WriteHeader(500)
-				fmt.Fprint(w, gitutils.PktLine("ERR InternalServerError: "+error.Error()))
+				gitutils.WriteGitProtocol(w, []string{"ERR InternalServerError: " + err.Error()})
+				fmt.Print(err.Error())
 			}
 		} else if command == "fetch" {
 			fmt.Println(lines)
 		}
 	} else {
-		fmt.Fprint(w, gitutils.PktLine(err.Error()))
+		w.WriteHeader(400)
+		gitutils.WriteGitProtocol(w, []string{"ERR Bad Request: " + err.Error()})
 	}
 }
 
@@ -67,10 +69,11 @@ func (g *GitHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(404)
-	fmt.Fprint(w, gitutils.PktLine("ERR Not Found"))
+	gitutils.WriteGitProtocol(w, []string{"ERR Not Found"})
 }
 
 func main() {
+	redisrepo.Init()
 	var s *http.Server = &http.Server{
 		Addr: ":8080",
 		Handler: &GitHandler{
@@ -78,6 +81,7 @@ func main() {
 			gitUploadPackHandler:     http.HandlerFunc(GitUploadPack),
 		},
 	}
+	fmt.Print("Running on http://localhost:8080")
 	log.Fatal(s.ListenAndServe())
 }
 

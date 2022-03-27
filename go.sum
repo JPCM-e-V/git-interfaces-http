@@ -1,7 +1,5 @@
 github.com/JPCM-e-V/git-interfaces-go-utils v0.0.0-20220212123616-47c681e6eda6 h1:IouBFGo8Lk3p8WYrd36kHWvjXo5QOjvIa0eMGjn/OnA=
 github.com/JPCM-e-V/git-interfaces-go-utils v0.0.0-20220212123616-47c681e6eda6/go.mod h1:FxWsOUnJw5LatvwSGC3mZKIIEc4lR0ky+DzCk3eVK8I=
-github.com/JPCM-e-V/git-interfaces-redis-repo v0.0.0-20220219130431-085fdc7c593c h1:gycFk5nZi2yOOHpBcDybDCU2viBDCuG5NMMK4+ddXSs=
-github.com/JPCM-e-V/git-interfaces-redis-repo v0.0.0-20220219130431-085fdc7c593c/go.mod h1:dYNJIh01Ugn10RQydU0ej0toc0tP+ODQiIl6sJBHa98=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
